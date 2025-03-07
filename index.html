@@ -72,12 +72,13 @@
             transform: translateY(-8px);
             box-shadow: 0 12px 24px rgba(23, 80, 172, 0.25);
         }
-        #tableContainer {
-            min-height: 450px;
+        #testsTableContainer, #tableContainer {
+            min-height: 200px;
             border-radius: 20px;
             overflow-x: auto;
             background: linear-gradient(135deg, #ffffff, #86CEFA);
             padding: 15px;
+            margin-bottom: 20px;
         }
         #photoPlaceholder {
             width: 140px;
@@ -196,7 +197,7 @@
             border-color: #3373C4;
             box-shadow: 0 0 8px rgba(51, 115, 196, 0.5);
         }
-        #dataTable {
+        #testsTable, #dataTable {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
@@ -204,7 +205,7 @@
             text-align: center;
             background-color: #ffffff;
         }
-        #dataTable th {
+        #testsTable th, #dataTable th {
             background-color: #3373C4;
             color: #ffffff;
             padding: 12px;
@@ -212,13 +213,13 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        #dataTable tr:nth-child(even) {
+        #testsTable tr:nth-child(even), #dataTable tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-        #dataTable tr:hover {
+        #testsTable tr:hover, #dataTable tr:hover {
             background-color: #e0f7fa;
         }
-        #dataTable td {
+        #testsTable td, #dataTable td {
             padding: 10px;
             border: 1px solid #ddd;
         }
@@ -233,8 +234,8 @@
                 height: 90px;
                 font-size: 12px;
             }
-            #tableContainer {
-                min-height: 300px;
+            #testsTableContainer, #tableContainer {
+                min-height: 150px;
             }
             h1 {
                 font-size: 1.5rem;
@@ -253,7 +254,7 @@
             .kpi-label {
                 font-size: 0.9rem;
             }
-            #dataTable th, #dataTable td {
+            #testsTable th, #testsTable td, #dataTable th, #dataTable td {
                 font-size: 14px;
                 padding: 8px;
             }
@@ -264,6 +265,11 @@
     <div class="container">
         <h1 class="mb-4">Sprint-Analyse-Dashboard v2 <img src="https://i.imgur.com/xcUce9r.png" alt="New Logo" class="logo-img"></h1>
         <div class="row justify-content-center g-4">
+            <div class="col-12">
+                <div id="testsTableContainer" class="dashboard-card">
+                    <table id="testsTable"></table>
+                </div>
+            </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <label for="athleteSelect" class="form-label">Athlet auswählen:</label>
                 <select id="athleteSelect" class="form-select" onchange="updateTestFilter()">
@@ -373,6 +379,7 @@
         ];
 
         const athletes = [...new Set(summaryData.map(entry => entry.athlete))].sort();
+        const tests = [...new Set(summaryData.map(entry => entry.test))].sort();
 
         const athleteSelect = document.getElementById('athleteSelect');
         athletes.forEach(athlete => {
@@ -403,6 +410,32 @@
             "800m Lauf": {"Bronze": 320, "Silber": 280, "Gold": 245},
             "Seilspringen": {"Bronze": 20, "Silber": 30, "Gold": 40},
             "Standweitsprung": {"Bronze": 150, "Silber": 170, "Gold": 185}
+        };
+
+        // Populate tests table on page load
+        window.onload = function() {
+            let testsTableHTML = `
+                <thead>
+                    <tr>
+                        <th>Test</th>
+                        <th>Einheit</th>
+                        <th>Platzhalter</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+            tests.forEach(test => {
+                const unit = summaryData.find(row => row.test === test).unit || '';
+                testsTableHTML += `
+                    <tr>
+                        <td>${test}</td>
+                        <td>${unit === 's' ? 'Sekunden' : unit === 'Reps' ? 'Wiederholungen' : unit === 'cm' ? 'm' : unit}</td>
+                        <td>-</td>
+                    </tr>
+                `;
+            });
+            testsTableHTML += '</tbody>';
+            document.getElementById('testsTable').innerHTML = testsTableHTML;
         };
 
         function updateTestFilter() {
