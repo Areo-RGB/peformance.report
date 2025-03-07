@@ -7,48 +7,48 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.2.1/dist/chartjs-plugin-annotation.min.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1E1E1E;
-            color: #FFFFFF;
-            text-align: center;
-            padding: 20px;
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #1E1E1E; 
+            color: #FFFFFF; 
+            text-align: center; 
+            padding: 20px; 
         }
-        h1 {
-            color: #FFFFFF;
+        h1 { 
+            color: #FFFFFF; 
         }
-        select {
-            padding: 8px;
-            font-size: 16px;
-            border-radius: 5px;
-            margin: 10px;
-            background-color: #333;
-            color: #FFFFFF;
-            border: 1px solid #555;
+        select { 
+            padding: 8px; 
+            font-size: 16px; 
+            border-radius: 5px; 
+            margin: 10px; 
+            background-color: #333; 
+            color: #FFFFFF; 
+            border: 1px solid #555; 
         }
         select option {
             background-color: #333;
             color: #FFFFFF;
         }
-        #chartContainer {
-            width: 80%;
-            margin: 0 auto;
-            background: #2C2C2C;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-            border: 1px solid #444;
+        #chartContainer { 
+            width: 80%; 
+            margin: 0 auto; 
+            background: #2C2C2C; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); 
+            border: 1px solid #444; 
         }
-        #legend {
-            margin-top: 10px;
-            font-size: 14px;
-            text-align: left;
-            display: inline-block;
-            color: #FFFFFF;
+        #legend { 
+            margin-top: 10px; 
+            font-size: 14px; 
+            text-align: left; 
+            display: inline-block; 
+            color: #FFFFFF; 
         }
-        .legend-item {
-            margin-right: 20px;
-            display: inline-block;
+        .legend-item { 
+            margin-right: 20px; 
+            display: inline-block; 
         }
         #summaryCard {
             width: 80%;
@@ -73,51 +73,51 @@
             color: #FFFFFF;
             text-align: center;
         }
-        #kpiContainer {
-            flex: 1;
-            color: #FFFFFF;
+        #kpiContainer { 
+            flex: 1; 
+            color: #FFFFFF; 
         }
-        .category-header {
-            font-weight: bold;
-            margin-top: 10px;
-            color: #FFFFFF;
+        .category-header { 
+            font-weight: bold; 
+            margin-top: 10px; 
+            color: #FFFFFF; 
         }
-        .category-summary {
-            margin-bottom: 5px;
-            padding: 5px;
-            background: #383838;
-            border-radius: 5px;
-            font-size: 14px;
-            color: #FFFFFF;
+        .category-summary { 
+            margin-bottom: 5px; 
+            padding: 5px; 
+            background: #383838; 
+            border-radius: 5px; 
+            font-size: 14px; 
+            color: #FFFFFF; 
         }
-        .test-result {
-            margin-bottom: 5px;
-            padding: 5px;
-            background: #333;
-            border-radius: 5px;
-            font-size: 14px;
-            color: #FFFFFF;
+        .test-result { 
+            margin-bottom: 5px; 
+            padding: 5px; 
+            background: #333; 
+            border-radius: 5px; 
+            font-size: 14px; 
+            color: #FFFFFF; 
         }
-        .kpi-label {
-            font-weight: bold;
-            color: #FFFFFF;
+        .kpi-label { 
+            font-weight: bold; 
+            color: #FFFFFF; 
         }
-        .percent-diff.green {
-            color: #00FF00;
+        .percent-diff.green { 
+            color: #00FF00; 
         }
-        .percent-diff.red {
-            color: #FF4040;
+        .percent-diff.red { 
+            color: #FF4040; 
         }
-        #compareToFilter {
-            display: none;
-            margin: 10px;
+        #compareToFilter { 
+            display: none; 
+            margin: 10px; 
         }
-        #dfbLogo {
-            width: 30px;
-            height: 30px;
-            vertical-align: middle;
-            margin-left: 5px;
-            filter: brightness(1.5);
+        #dfbLogo { 
+            width: 30px; 
+            height: 30px; 
+            vertical-align: middle; 
+            margin-left: 5px; 
+            filter: brightness(1.5); 
         }
     </style>
 </head>
@@ -144,50 +144,68 @@
     </div>
 
     <script>
-        // Hardcoded data with all entries
+        // Hardcoded data from your Flask code
         const raw_data = [
             {"test": "Antritt (10m)", "athlete": "August", "category": "Geschw.", "result": 2.38, "unit": "s"},
             {"test": "Antritt (10m)", "athlete": "Iraklis", "category": "Geschw.", "result": 2.16, "unit": "s"},
-            {"test": "Antritt (10m)", "athlete": "Jonas", "category": "Geschw.", "result": 2.25, "unit": "s"},
-            {"test": "Antritt (10m)", "athlete": "Leon", "category": "Geschw.", "result": 2.42, "unit": "s"},
-            {"test": "Antritt (10m)", "athlete": "Mateo", "category": "Geschw.", "result": 2.31, "unit": "s"},
-            {"test": "Antritt (10m)", "athlete": "Noah", "category": "Geschw.", "result": 2.29, "unit": "s"},
-            {"test": "Antritt (10m)", "athlete": "Ø", "category": "Geschw.", "result": 2.3, "unit": "s"},
-            {"test": "Schnelligkeit (20m)", "athlete": "August", "category": "Geschw.", "result": 3.85, "unit": "s"},
-            {"test": "Schnelligkeit (20m)", "athlete": "Iraklis", "category": "Geschw.", "result": 3.62, "unit": "s"},
-            {"test": "Schnelligkeit (20m)", "athlete": "Jonas", "category": "Geschw.", "result": 3.78, "unit": "s"},
-            {"test": "Schnelligkeit (20m)", "athlete": "Leon", "category": "Geschw.", "result": 3.91, "unit": "s"},
-            {"test": "Schnelligkeit (20m)", "athlete": "Mateo", "category": "Geschw.", "result": 3.87, "unit": "s"},
-            {"test": "Schnelligkeit (20m)", "athlete": "Noah", "category": "Geschw.", "result": 3.82, "unit": "s"},
-            {"test": "Schnelligkeit (20m)", "athlete": "Ø", "category": "Geschw.", "result": 3.81, "unit": "s"},
-            {"test": "50m Sprint", "athlete": "August", "category": "Geschw.", "result": 8.9, "unit": "s"},
-            {"test": "50m Sprint", "athlete": "Iraklis", "category": "Geschw.", "result": 8.3, "unit": "s"},
-            {"test": "50m Sprint", "athlete": "Jonas", "category": "Geschw.", "result": 8.6, "unit": "s"},
-            {"test": "50m Sprint", "athlete": "Leon", "category": "Geschw.", "result": 9.2, "unit": "s"},
-            {"test": "50m Sprint", "athlete": "Mateo", "category": "Geschw.", "result": 8.8, "unit": "s"},
-            {"test": "50m Sprint", "athlete": "Noah", "category": "Geschw.", "result": 8.7, "unit": "s"},
-            {"test": "50m Sprint", "athlete": "Ø", "category": "Geschw.", "result": 8.75, "unit": "s"},
-            {"test": "Seilspringen", "athlete": "August", "category": "Koord.", "result": 25, "unit": "Reps"},
-            {"test": "Seilspringen", "athlete": "Iraklis", "category": "Koord.", "result": 35, "unit": "Reps"},
-            {"test": "Seilspringen", "athlete": "Jonas", "category": "Koord.", "result": 30, "unit": "Reps"},
-            {"test": "Seilspringen", "athlete": "Leon", "category": "Koord.", "result": 20, "unit": "Reps"},
-            {"test": "Seilspringen", "athlete": "Mateo", "category": "Koord.", "result": 28, "unit": "Reps"},
-            {"test": "Seilspringen", "athlete": "Noah", "category": "Koord.", "result": 32, "unit": "Reps"},
-            {"test": "Seilspringen", "athlete": "Ø", "category": "Koord.", "result": 28.33, "unit": "Reps"},
-            {"test": "Standweitsprung", "athlete": "August", "category": "Kraft", "result": 165, "unit": "cm"},
-            {"test": "Standweitsprung", "athlete": "Iraklis", "category": "Kraft", "result": 180, "unit": "cm"},
-            {"test": "Standweitsprung", "athlete": "Jonas", "category": "Kraft", "result": 170, "unit": "cm"},
-            {"test": "Standweitsprung", "athlete": "Leon", "category": "Kraft", "result": 160, "unit": "cm"},
-            {"test": "Standweitsprung", "athlete": "Mateo", "category": "Kraft", "result": 175, "unit": "cm"},
-            {"test": "Standweitsprung", "athlete": "Noah", "category": "Kraft", "result": 168, "unit": "cm"},
-            {"test": "Standweitsprung", "athlete": "Ø", "category": "Kraft", "result": 169.67, "unit": "cm"},
-            {"test": "800m Lauf", "athlete": "August", "category": "Ausd.", "result": 300, "unit": "s"},
-            {"test": "800m Lauf", "athlete": "Iraklis", "category": "Ausd.", "result": 260, "unit": "s"},
-            {"test": "800m Lauf", "athlete": "Jonas", "category": "Ausd.", "result": 280, "unit": "s"},
-            {"test": "800m Lauf", "athlete": "Leon", "category": "Ausd.", "result": 310, "unit": "s"},
-            {"test": "800m Lauf", "athlete": "Mateo", "category": "Ausd.", "result": 290, "unit": "s"},
-            {"test": "800m Lauf", "athlete": "Noah", "category": "Ausd.", "result": 275, "unit": "s"},
-            {"test": "800m Lauf", "athlete": "Ø", "category": "Ausd.", "result": 285.83, "unit": "s"}
+            {"test": "Antritt (10m)", "athlete": "Erik", "category": "Geschw.", "result": 2.21, "unit": "s"},
+            {"test": "Antritt (10m)", "athlete": "Finley", "category": "Geschw.", "result": 1.96, "unit": "s"},
+            {"test": "Antritt (10m)", "athlete": "Levi", "category": "Geschw.", "result": 2.14, "unit": "s"},
+            {"test": "Antritt (10m)", "athlete": "Orestis", "category": "Geschw.", "result": 2.27, "unit": "s"},
+            {"test": "Antritt (10m)", "athlete": "Paul", "category": "Geschw.", "result": 2.11, "unit": "s"},
+            {"test": "Antritt (10m)", "athlete": "Lasse", "category": "Geschw.", "result": 2.13, "unit": "s"},
+            {"test": "Antritt (10m)", "athlete": "Lion", "category": "Geschw.", "result": 2.09, "unit": "s"},
+            {"test": "Antritt (10m)", "athlete": "Nicklas", "category": "Geschw.", "result": 2.13, "unit": "s"},
+            {"test": "Antritt (10m)", "athlete": "CJ", "category": "Geschw.", "result": 2.12, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "August", "category": "Geschw.", "result": 4.13, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Iraklis", "category": "Geschw.", "result": 3.66, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Erik", "category": "Geschw.", "result": 3.82, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Finley", "category": "Geschw.", "result": 3.45, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Levi", "category": "Geschw.", "result": 3.89, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Orestis", "category": "Geschw.", "result": 3.88, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Paul", "category": "Geschw.", "result": 3.68, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Lasse", "category": "Geschw.", "result": 3.84, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Lion", "category": "Geschw.", "result": 3.74, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Nicklas", "category": "Geschw.", "result": 3.7, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "CJ", "category": "Geschw.", "result": 3.62, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Finley", "category": "Geschw.", "result": 8.86, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Silas", "category": "Geschw.", "result": 9.12, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Nicklas", "category": "Geschw.", "result": 9.17, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Orestis", "category": "Geschw.", "result": 9.17, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Levi", "category": "Geschw.", "result": 9.24, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Paul", "category": "Geschw.", "result": 9.3, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Lasse", "category": "Geschw.", "result": 9.32, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Iraklis", "category": "Geschw.", "result": 9.51, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Lion", "category": "Geschw.", "result": 9.6, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "August", "category": "Geschw.", "result": 10.25, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Carlito", "category": "Geschw.", "result": 10.49, "unit": "s"},
+            {"test": "Seilspringen", "athlete": "Arvid", "category": "Koordination", "result": 32, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "Carl", "category": "Koordination", "result": 10, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "CJ", "category": "Koordination", "result": 31, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "Erik", "category": "Koordination", "result": 121, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "Finley", "category": "Koordination", "result": 82, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "Jakob", "category": "Koordination", "result": 21, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "Lasse", "category": "Koordination", "result": 30, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "Levi", "category": "Koordination", "result": 22, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "Lion", "category": "Koordination", "result": 66, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "Silas", "category": "Koordination", "result": 51, "unit": "Reps"},
+            {"test": "Standweitsprung", "athlete": "Ø", "category": "KPI", "result": 163, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Arvid", "category": "Kraft", "result": 201, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Carl", "category": "Kraft", "result": 151, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "CJ", "category": "Kraft", "result": 198, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Erik", "category": "Kraft", "result": 143, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Finley", "category": "Kraft", "result": 169, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Iraklis", "category": "Kraft", "result": 146, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Jakob", "category": "Kraft", "result": 161, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Lasse", "category": "Kraft", "result": 162, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Levi", "category": "Kraft", "result": 152, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Lion", "category": "Kraft", "result": 182, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Nicklas", "category": "Kraft", "result": 124, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Orestis", "category": "Kraft", "result": 161, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Paul", "category": "Kraft", "result": 176, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Silas", "category": "Kraft", "result": 149, "unit": "cm"},
+            {"test": "800m Lauf", "athlete": "Finley", "category": "Ausdauer", "result": 198, "unit": "s"},
+            {"test": "800m Lauf", "athlete": "Erik", "category": "Ausdauer", "result": 186, "unit": "s"}
         ];
 
         // Extract unique athletes (exclude Ø)
@@ -213,7 +231,7 @@
             overall_averages[test] = test_data.length > 0 ? Math.round((test_data.reduce((sum, val) => sum + val, 0) / test_data.length) * 100) / 100 : 0;
         });
 
-        // Predefined DFB data and thresholds
+        // DFB averages and best results
         const dfb_averages = {
             "Antritt (10m)": 2.19,
             "Schnelligkeit (20m)": 3.79
@@ -406,39 +424,39 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: `Result (${unit})`,
-                                color: '#FFFFFF'
+                            title: { 
+                                display: true, 
+                                text: `Result (${unit})`, 
+                                color: '#FFFFFF' 
                             },
                             position: 'left',
                             suggestedMax: Math.max(...averages, comparisonAvg, dfbBestResult || 0) * 1.2 || 10,
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
+                            grid: { 
+                                color: 'rgba(255, 255, 255, 0.1)' 
                             },
-                            ticks: {
-                                color: '#FFFFFF'
+                            ticks: { 
+                                color: '#FFFFFF' 
                             }
                         },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Athlete',
-                                color: '#FFFFFF'
+                        x: { 
+                            title: { 
+                                display: true, 
+                                text: 'Athlete', 
+                                color: '#FFFFFF' 
                             },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
+                            grid: { 
+                                color: 'rgba(255, 255, 255, 0.1)' 
                             },
-                            ticks: {
-                                color: '#FFFFFF'
+                            ticks: { 
+                                color: '#FFFFFF' 
                             }
                         }
                     },
                     plugins: {
-                        title: {
-                            display: true,
-                            text: `${selectedTest} Performance`,
-                            color: '#FFFFFF'
+                        title: { 
+                            display: true, 
+                            text: `${selectedTest} Performance`, 
+                            color: '#FFFFFF' 
                         },
                         annotation: {
                             annotations: thresholdZones.map(zone => ({
