@@ -144,20 +144,50 @@
     </div>
 
     <script>
-        // Hardcoded data
+        // Hardcoded data with all entries
         const raw_data = [
             {"test": "Antritt (10m)", "athlete": "August", "category": "Geschw.", "result": 2.38, "unit": "s"},
             {"test": "Antritt (10m)", "athlete": "Iraklis", "category": "Geschw.", "result": 2.16, "unit": "s"},
+            {"test": "Antritt (10m)", "athlete": "Jonas", "category": "Geschw.", "result": 2.25, "unit": "s"},
+            {"test": "Antritt (10m)", "athlete": "Leon", "category": "Geschw.", "result": 2.42, "unit": "s"},
+            {"test": "Antritt (10m)", "athlete": "Mateo", "category": "Geschw.", "result": 2.31, "unit": "s"},
+            {"test": "Antritt (10m)", "athlete": "Noah", "category": "Geschw.", "result": 2.29, "unit": "s"},
+            {"test": "Antritt (10m)", "athlete": "Ø", "category": "Geschw.", "result": 2.3, "unit": "s"},
             {"test": "Schnelligkeit (20m)", "athlete": "August", "category": "Geschw.", "result": 3.85, "unit": "s"},
             {"test": "Schnelligkeit (20m)", "athlete": "Iraklis", "category": "Geschw.", "result": 3.62, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Jonas", "category": "Geschw.", "result": 3.78, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Leon", "category": "Geschw.", "result": 3.91, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Mateo", "category": "Geschw.", "result": 3.87, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Noah", "category": "Geschw.", "result": 3.82, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Ø", "category": "Geschw.", "result": 3.81, "unit": "s"},
             {"test": "50m Sprint", "athlete": "August", "category": "Geschw.", "result": 8.9, "unit": "s"},
             {"test": "50m Sprint", "athlete": "Iraklis", "category": "Geschw.", "result": 8.3, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Jonas", "category": "Geschw.", "result": 8.6, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Leon", "category": "Geschw.", "result": 9.2, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Mateo", "category": "Geschw.", "result": 8.8, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Noah", "category": "Geschw.", "result": 8.7, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Ø", "category": "Geschw.", "result": 8.75, "unit": "s"},
             {"test": "Seilspringen", "athlete": "August", "category": "Koord.", "result": 25, "unit": "Reps"},
             {"test": "Seilspringen", "athlete": "Iraklis", "category": "Koord.", "result": 35, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "Jonas", "category": "Koord.", "result": 30, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "Leon", "category": "Koord.", "result": 20, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "Mateo", "category": "Koord.", "result": 28, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "Noah", "category": "Koord.", "result": 32, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "Ø", "category": "Koord.", "result": 28.33, "unit": "Reps"},
             {"test": "Standweitsprung", "athlete": "August", "category": "Kraft", "result": 165, "unit": "cm"},
             {"test": "Standweitsprung", "athlete": "Iraklis", "category": "Kraft", "result": 180, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Jonas", "category": "Kraft", "result": 170, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Leon", "category": "Kraft", "result": 160, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Mateo", "category": "Kraft", "result": 175, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Noah", "category": "Kraft", "result": 168, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Ø", "category": "Kraft", "result": 169.67, "unit": "cm"},
             {"test": "800m Lauf", "athlete": "August", "category": "Ausd.", "result": 300, "unit": "s"},
-            {"test": "800m Lauf", "athlete": "Iraklis", "category": "Ausd.", "result": 260, "unit": "s"}
+            {"test": "800m Lauf", "athlete": "Iraklis", "category": "Ausd.", "result": 260, "unit": "s"},
+            {"test": "800m Lauf", "athlete": "Jonas", "category": "Ausd.", "result": 280, "unit": "s"},
+            {"test": "800m Lauf", "athlete": "Leon", "category": "Ausd.", "result": 310, "unit": "s"},
+            {"test": "800m Lauf", "athlete": "Mateo", "category": "Ausd.", "result": 290, "unit": "s"},
+            {"test": "800m Lauf", "athlete": "Noah", "category": "Ausd.", "result": 275, "unit": "s"},
+            {"test": "800m Lauf", "athlete": "Ø", "category": "Ausd.", "result": 285.83, "unit": "s"}
         ];
 
         // Extract unique athletes (exclude Ø)
