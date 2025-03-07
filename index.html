@@ -22,6 +22,7 @@
             padding: 20px; 
             border-radius: 10px; 
             box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+            min-height: 400px; /* Ensures a decent height */
         }
         #legend { 
             font-size: 14px; 
@@ -84,6 +85,9 @@
                 height: 80px; 
                 font-size: 10px; 
             }
+            #chartContainer { 
+                min-height: 300px; /* Smaller height for mobile */
+            }
         }
     </style>
 </head>
@@ -129,10 +133,9 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS Bundle (includes Popper.js) -->
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
-        // Hardcoded data (unchanged)
         const summaryData = [
             {"athlete": "August", "test": "Antritt (10m)", "average": 2.38, "unit": "s"},
             {"athlete": "Iraklis", "test": "Antritt (10m)", "average": 2.16, "unit": "s"},
@@ -314,20 +317,55 @@
                     datasets: datasets
                 },
                 options: {
+                    indexAxis: 'y', // Makes it a horizontal bar chart
                     scales: {
-                        y: {
+                        x: {
                             beginAtZero: true,
-                            title: { display: true, text: `Result (${unit})` },
-                            position: 'left',
-                            suggestedMax: Math.max(...averages, comparisonAvg) * 1.2 || 10
+                            title: { 
+                                display: true, 
+                                text: `Result (${unit})`,
+                                font: { size: window.innerWidth < 576 ? 12 : 14 }
+                            },
+                            suggestedMax: Math.max(...averages, comparisonAvg) * 1.2 || 10,
+                            ticks: { 
+                                font: { size: window.innerWidth < 576 ? 10 : 12 }
+                            }
                         },
-                        x: { title: { display: true, text: 'Athlete' } }
+                        y: { 
+                            title: { 
+                                display: true, 
+                                text: 'Athlete',
+                                font: { size: window.innerWidth < 576 ? 12 : 14 }
+                            },
+                            ticks: { 
+                                font: { size: window.innerWidth < 576 ? 10 : 12 }
+                            }
+                        }
                     },
                     plugins: {
-                        title: { display: true, text: `${selectedTest} Performance` },
+                        title: { 
+                            display: true, 
+                            text: `${selectedTest} Performance`,
+                            font: { size: window.innerWidth < 576 ? 14 : 16 }
+                        },
+                        legend: {
+                            labels: {
+                                font: { size: window.innerWidth < 576 ? 10 : 12 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    label += context.raw + ' ' + unit;
+                                    return label;
+                                }
+                            }
+                        }
                     },
                     responsive: true,
-                    maintainAspectRatio: true
+                    maintainAspectRatio: false // Allows chart to fill container height
                 }
             });
         }
