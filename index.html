@@ -229,7 +229,7 @@
             "50m Sprint": {"Bronze": 10.3, "Silber": 9.1, "Gold": 8.4},
             "800m Lauf": {"Bronze": 320, "Silber": 280, "Gold": 245},
             "Seilspringen": {"Bronze": 20, "Silber": 30, "Gold": 40},
-            "Standweitsprung": {"Bronze": 150, "Silber": 170, "Gold": 185}
+            "Standweitsprung": {"Bronze": 150, "Silber": 170, "Gold": 185} // In cm
         };
 
         let myChart;
@@ -436,11 +436,15 @@
                                 if (athleteResult <= (th.Gold || Infinity)) medalAchieved = 'Gold';
                                 else if (athleteResult <= (th.Silber || Infinity)) medalAchieved = 'Silber';
                                 else if (athleteResult <= (th.Bronze || Infinity)) medalAchieved = 'Bronze';
-                            } else if (unit === 'Reps' || unit === 'cm') {
-                                const adjustedResult = unit === 'cm' ? athleteResult / 100 : athleteResult;
-                                if (adjustedResult >= (th.Gold || 0)) medalAchieved = 'Gold';
-                                else if (adjustedResult >= (th.Silber || 0)) medalAchieved = 'Silber';
-                                else if (adjustedResult >= (th.Bronze || 0)) medalAchieved = 'Bronze';
+                            } else if (unit === 'Reps') {
+                                if (athleteResult >= (th.Gold || 0)) medalAchieved = 'Gold';
+                                else if (athleteResult >= (th.Silber || 0)) medalAchieved = 'Silber';
+                                else if (athleteResult >= (th.Bronze || 0)) medalAchieved = 'Bronze';
+                            } else if (unit === 'cm') {
+                                // Compare directly in centimeters
+                                if (athleteResult >= (th.Gold || 0)) medalAchieved = 'Gold';
+                                else if (athleteResult >= (th.Silber || 0)) medalAchieved = 'Silber';
+                                else if (athleteResult >= (th.Bronze || 0)) medalAchieved = 'Bronze';
                             }
                         }
 
