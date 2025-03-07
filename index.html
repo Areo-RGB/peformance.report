@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@600&display=swap" rel="stylesheet">
     <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -59,184 +60,46 @@
         .container {
             max-width: 1300px;
         }
-        .dashboard-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 8px 16px rgba(23, 80, 172, 0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid #73B9EE;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 24px rgba(23, 80, 172, 0.25);
-        }
-        #testsTableContainer, #tableContainer {
-            min-height: 200px;
-            border-radius: 20px;
-            overflow-x: auto;
-            background: linear-gradient(135deg, #ffffff, #86CEFA);
-            padding: 15px;
+        .test-table-container {
             margin-bottom: 20px;
         }
-        #photoPlaceholder {
-            width: 140px;
-            height: 140px;
-            background: linear-gradient(135deg, #86CEFA, #73B9EE);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 16px;
-            color: #003396;
-            text-align: center;
-            flex-shrink: 0;
-            box-shadow: 0 6px 12px rgba(23, 80, 172, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        #photoPlaceholder:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 16px rgba(23, 80, 172, 0.2);
-        }
-        .category-header {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-            margin-top: 20px;
-            color: #3373C4;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-        }
-        .category-header::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 50px;
-            height: 3px;
-            background: #1750AC;
-            transition: width 0.3s ease;
-        }
-        .category-header:hover::after {
-            width: 100%;
-        }
-        .category-summary, .test-result {
-            margin-bottom: 15px;
-            padding: 15px;
-            border-radius: 15px;
-            font-size: 15px;
-            transition: transform 0.3s ease, background-color 0.3s ease;
-        }
-        .category-summary {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(5px);
-        }
-        .category-summary:hover {
-            transform: translateX(5px);
-            background: rgba(255, 255, 255, 0.9);
-        }
-        .test-result {
-            background: rgba(255, 255, 255, 0.95);
-            border-left: 5px solid #3373C4;
-            position: relative;
-            overflow: hidden;
-        }
-        .test-result::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(51, 115, 196, 0.1));
-            animation: shine 3s infinite;
-        }
-        @keyframes shine {
-            0% { left: -100%; }
-            20% { left: 100%; }
-            100% { left: 100%; }
-        }
-        .test-result:hover {
-            transform: translateX(5px);
-            background: rgba(255, 255, 255, 1);
-        }
-        .kpi-label {
-            font-weight: 700;
-            color: #003396;
-        }
-        .percent-diff.green {
-            color: #27ae60;
-            font-weight: 700;
-            text-shadow: 1px 1px 2px rgba(39, 174, 96, 0.3);
-        }
-        .percent-diff.red {
-            color: #e74c3c;
-            font-weight: 700;
-            text-shadow: 1px 1px 2px rgba(231, 76, 60, 0.3);
-        }
-        #dfbLogo {
-            width: 35px;
-            height: 35px;
-            vertical-align: middle;
-            margin-left: 8px;
-            filter: drop-shadow(2px 2px 4px rgba(0, 51, 150, 0.2));
-            transition: transform 0.3s ease;
-        }
-        #dfbLogo:hover {
-            transform: rotate(10deg);
-        }
-        .form-select {
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(23, 80, 172, 0.1);
-            border: 1px solid #73B9EE;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .form-select:focus {
-            border-color: #3373C4;
-            box-shadow: 0 0 8px rgba(51, 115, 196, 0.5);
-        }
-        #testsTable, #dataTable {
+        .test-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin: 10px 0;
             font-size: 16px;
             text-align: center;
             background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
         }
-        #testsTable th, #dataTable th {
+        .test-table th {
             background-color: #3373C4;
             color: #ffffff;
-            padding: 12px;
+            padding: 10px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        #testsTable tr:nth-child(even), #dataTable tr:nth-child(even) {
+        .test-table tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-        #testsTable tr:hover, #dataTable tr:hover {
+        .test-table tr:hover {
             background-color: #e0f7fa;
         }
-        #testsTable td, #dataTable td {
-            padding: 10px;
+        .test-table td {
+            padding: 8px;
             border: 1px solid #ddd;
         }
-        .selected-player {
-            background-color: #3373C4 !important;
-            color: #ffffff !important;
-            font-weight: 700;
+        #chartContainer {
+            min-height: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffffff, #86CEFA);
+            padding: 15px;
+            margin-top: 20px;
         }
         @media (max-width: 576px) {
-            #photoPlaceholder {
-                width: 90px;
-                height: 90px;
-                font-size: 12px;
-            }
-            #testsTableContainer, #tableContainer {
-                min-height: 150px;
-            }
             h1 {
                 font-size: 1.5rem;
                 padding: 10px;
@@ -244,19 +107,12 @@
             .logo-img {
                 width: 40px;
             }
-            .category-header {
-                font-size: 1.1rem;
-            }
-            .category-summary, .test-result {
-                font-size: 13px;
-                padding: 10px;
-            }
-            .kpi-label {
-                font-size: 0.9rem;
-            }
-            #testsTable th, #testsTable td, #dataTable th, #dataTable td {
+            .test-table th, .test-table td {
                 font-size: 14px;
-                padding: 8px;
+                padding: 6px;
+            }
+            #chartContainer {
+                min-height: 300px;
             }
         }
     </style>
@@ -266,47 +122,28 @@
         <h1 class="mb-4">Sprint-Analyse-Dashboard v2 <img src="https://i.imgur.com/xcUce9r.png" alt="New Logo" class="logo-img"></h1>
         <div class="row justify-content-center g-4">
             <div class="col-12">
-                <div id="testsTableContainer" class="dashboard-card">
-                    <table id="testsTable"></table>
+                <div class="test-table-container">
+                    <!-- Test tables will be populated dynamically -->
                 </div>
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <label for="athleteSelect" class="form-label">Athlet auswählen:</label>
-                <select id="athleteSelect" class="form-select" onchange="updateTestFilter()">
+                <select id="athleteSelect" class="form-select" onchange="updateChart()">
                     <option value="" disabled selected>Wählen Sie einen Athleten</option>
                 </select>
             </div>
             <div class="col-12 col-md-6 col-lg-4">
-                <label for="testSelect" class="form-label">Test auswählen:</label>
-                <select id="testSelect" class="form-select" onchange="updateCompareFilter()">
-                    <option value="" disabled selected>Wählen Sie einen Test</option>
-                </select>
-            </div>
-            <div class="col-12 col-md-6 col-lg-4" id="compareToFilter">
                 <label for="compareSelect" class="form-label">Vergleichen mit:</label>
-                <select id="compareSelect" class="form-select" onchange="updateTable()">
+                <select id="compareSelect" class="form-select" onchange="updateChart()">
                     <option value="team">Team-Durchschnitt</option>
-                    <option value="dfb">DFB-Durchschnitt <img id="dfbLogo" src="https://seeklogo.com/images/D/dfb-logo-2CA8993E79-seeklogo.com.png" alt="DFB Logo"></option>
+                    <option value="dfb">DFB-Durchschnitt</option>
                 </select>
             </div>
         </div>
         <div class="row mt-4">
             <div class="col-12">
-                <div id="tableContainer" class="dashboard-card">
-                    <table id="dataTable"></table>
-                </div>
-            </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col-12 text-center">
-                <div id="legend" style="font-family: 'Montserrat', sans-serif; font-size: 14px; color: #003396;"></div>
-            </div>
-        </div>
-        <div class="row mt-4">
-            <div class="col-12">
-                <div id="summaryCard" class="dashboard-card d-flex flex-column flex-md-row align-items-md-start">
-                    <div id="photoPlaceholder" class="me-md-4 mb-3 mb-md-0">Athletenfoto</div>
-                    <div id="kpiContainer" class="flex-grow-1"></div>
+                <div id="chartContainer" class="dashboard-card">
+                    <canvas id="myChart"></canvas>
                 </div>
             </div>
         </div>
@@ -412,141 +249,69 @@
             "Standweitsprung": {"Bronze": 150, "Silber": 170, "Gold": 185}
         };
 
-        // Populate tests table on page load
+        // Populate test ranking tables on page load
         window.onload = function() {
-            let testsTableHTML = `
-                <thead>
-                    <tr>
-                        <th>Test</th>
-                        <th>Einheit</th>
-                        <th>Platzhalter</th>
-                    </tr>
-                </thead>
-                <tbody>
-            `;
+            const testTableContainer = document.querySelector('.test-table-container');
             tests.forEach(test => {
-                const unit = summaryData.find(row => row.test === test).unit || '';
-                testsTableHTML += `
-                    <tr>
-                        <td>${test}</td>
-                        <td>${unit === 's' ? 'Sekunden' : unit === 'Reps' ? 'Wiederholungen' : unit === 'cm' ? 'm' : unit}</td>
-                        <td>-</td>
-                    </tr>
+                const testData = summaryData.filter(row => row.test === test);
+                const unit = testData[0].unit;
+                const isLowerBetter = ['s'].includes(unit);
+
+                // Sort data: ascending for time (s), descending for others
+                testData.sort((a, b) => 
+                    isLowerBetter ? a.average - b.average : b.average - a.average
+                );
+
+                // Assign ranks
+                testData.forEach((row, index) => row.rank = index + 1);
+
+                let tableHTML = `
+                    <h4 style="color: #3373C4; font-family: 'Montserrat', sans-serif; margin-top: 15px;">${test}</h4>
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th>Athlet</th>
+                                <th>Ergebnis</th>
+                                <th>Rang</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                 `;
+
+                testData.forEach(row => {
+                    const displayResult = unit === 'cm' ? (row.average / 100).toFixed(2) : row.average;
+                    const displayUnit = unit === 's' ? 'Sekunden' : unit === 'Reps' ? 'Wiederholungen' : unit === 'cm' ? 'm' : unit;
+                    tableHTML += `
+                        <tr>
+                            <td>${row.athlete}</td>
+                            <td>${displayResult} ${displayUnit}</td>
+                            <td>${row.rank}</td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += '</tbody></table>';
+                testTableContainer.innerHTML += tableHTML;
             });
-            testsTableHTML += '</tbody>';
-            document.getElementById('testsTable').innerHTML = testsTableHTML;
         };
 
-        function updateTestFilter() {
-            const testSelect = document.getElementById('testSelect');
-            const selectedAthlete = athleteSelect.value;
-
-            const availableTests = [...new Set(summaryData
-                .filter(row => row.athlete === selectedAthlete)
-                .map(row => row.test))];
-
-            testSelect.innerHTML = '';
-            availableTests.forEach(test => {
-                const option = document.createElement('option');
-                option.value = test;
-                option.text = test;
-                testSelect.appendChild(option);
-            });
-
-            updateCompareFilter();
-            updateTable();
-            updateSummaryCard(selectedAthlete);
+        // Calculate Z-score: (value - mean) / standard deviation
+        function calculateZScore(value, mean, stdDev) {
+            return stdDev !== 0 ? (value - mean) / stdDev : 0;
         }
 
-        function updateCompareFilter() {
-            const testSelect = document.getElementById('testSelect');
-            const compareToFilter = document.getElementById('compareToFilter');
-            const selectedTest = testSelect.value;
+        let myChart;
 
-            if (selectedTest === "Antritt (10m)" || selectedTest === "Schnelligkeit (20m)") {
-                compareToFilter.style.display = 'block';
-            } else {
-                compareToFilter.style.display = 'none';
+        function updateChart() {
+            const selectedAthlete = athleteSelect.value;
+            const compareTo = document.getElementById('compareSelect').value;
+
+            if (!selectedAthlete) {
+                if (myChart) myChart.destroy();
+                document.getElementById('myChart').style.display = 'none';
+                return;
             }
-
-            updateTable();
-        }
-
-        function updateTable() {
-            const testSelect = document.getElementById('testSelect');
-            const compareSelect = document.getElementById('compareSelect');
-            const selectedAthlete = athleteSelect.value;
-            const selectedTest = testSelect.value;
-            const compareTo = compareSelect.value;
-
-            const testData = summaryData.filter(row => row.test === selectedTest);
-            const comparisonAvg = compareTo === 'dfb' ? dfbAverages[selectedTest] || 0 : overallAverages[selectedTest] || 0;
-            const unit = testData.length > 0 ? testData[0].unit : 's';
-            const displayUnit = unit === 's' ? 'Sekunden' : unit === 'Reps' ? 'Wiederholungen' : unit === 'cm' ? 'm' : unit;
-
-            let tableHTML = `
-                <thead>
-                    <tr>
-                        <th>Athlet</th>
-                        <th>Ergebnis (${displayUnit})</th>
-                        <th>Durchschnitt (${compareTo === 'dfb' ? 'DFB' : 'Team'})</th>
-                        <th>Abweichung (%)</th>
-                        <th>Medaille</th>
-                    </tr>
-                </thead>
-                <tbody>
-            `;
-
-            testData.forEach(row => {
-                const athleteResult = row.average || 0;
-                const displayResult = unit === 'cm' ? (athleteResult / 100).toFixed(2) : athleteResult;
-                const diffPercent = comparisonAvg !== 0 
-                    ? ((athleteResult - comparisonAvg) / Math.abs(comparisonAvg) * 100).toFixed(1)
-                    : (athleteResult !== 0 ? 100 : 0);
-                const isLowerBetter = ['s'].includes(unit);
-                const colorClass = isLowerBetter
-                    ? (parseFloat(diffPercent) < 0 ? 'green' : 'red')
-                    : (parseFloat(diffPercent) > 0 ? 'green' : 'red');
-
-                let medalAchieved = 'Keine';
-                if (thresholds[row.test]) {
-                    const th = thresholds[row.test];
-                    if (unit === 's') {
-                        if (athleteResult <= (th.Gold || Infinity)) medalAchieved = 'Gold';
-                        else if (athleteResult <= (th.Silber || Infinity)) medalAchieved = 'Silber';
-                        else if (athleteResult <= (th.Bronze || Infinity)) medalAchieved = 'Bronze';
-                    } else if (unit === 'Reps') {
-                        if (athleteResult >= (th.Gold || 0)) medalAchieved = 'Gold';
-                        else if (athleteResult >= (th.Silber || 0)) medalAchieved = 'Silber';
-                        else if (athleteResult >= (th.Bronze || 0)) medalAchieved = 'Bronze';
-                    } else if (unit === 'cm') {
-                        if (athleteResult >= (th.Gold || 0)) medalAchieved = 'Gold';
-                        else if (athleteResult >= (th.Silber || 0)) medalAchieved = 'Silber';
-                        else if (athleteResult >= (th.Bronze || 0)) medalAchieved = 'Bronze';
-                    }
-                }
-
-                const isSelected = row.athlete === selectedAthlete;
-                tableHTML += `
-                    <tr class="${isSelected ? 'selected-player' : ''}">
-                        <td>${row.athlete}</td>
-                        <td>${displayResult}</td>
-                        <td>${unit === 'cm' ? (comparisonAvg / 100).toFixed(2) : comparisonAvg}</td>
-                        <td class="${colorClass}">${diffPercent}%</td>
-                        <td style="color: ${medalAchieved === 'Gold' ? '#ffd700' : medalAchieved === 'Silber' ? '#c0c0c0' : medalAchieved === 'Bronze' ? '#cd7f32' : '#003396'}">${medalAchieved}</td>
-                    </tr>
-                `;
-            });
-
-            tableHTML += '</tbody>';
-            document.getElementById('dataTable').innerHTML = tableHTML;
-        }
-
-        function updateSummaryCard(selectedAthlete) {
-            const athleteData = summaryData.filter(row => row.athlete === selectedAthlete);
-            const compareSelect = document.getElementById('compareSelect');
-            const compareTo = compareSelect.value;
+            document.getElementById('myChart').style.display = 'block';
 
             const categories = {
                 "Schnelligkeit": ["Antritt (10m)", "Schnelligkeit (20m)", "50m Sprint"],
@@ -554,86 +319,95 @@
                 "Kraft": ["Standweitsprung"],
                 "Koordination": ["Seilspringen"]
             };
-            let kpiContent = '';
+
+            let categoryZScores = {};
+            const athleteData = summaryData.filter(row => row.athlete === selectedAthlete);
 
             for (const [category, tests] of Object.entries(categories)) {
-                const categoryTests = athleteData.filter(data => tests.includes(data.test));
-                if (categoryTests.length > 0) {
-                    kpiContent += `<div class="category-header">${category}</div>`;
+                const categoryData = summaryData.filter(row => tests.includes(row.test));
+                if (categoryData.length > 0) {
+                    const values = categoryData.map(row => row.average);
+                    const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
+                    const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
+                    const stdDev = Math.sqrt(variance);
 
-                    const athleteCategoryAvg = categoryTests.reduce((sum, data) => sum + data.average, 0) / categoryTests.length;
-                    const overallCategoryAvg = categoryTests.reduce((sum, data) => {
-                        const avg = compareTo === 'dfb' && (data.test === "Antritt (10m)" || data.test === "Schnelligkeit (20m)")
-                            ? (dfbAverages[data.test] || 0)
-                            : (overallAverages[data.test] || 0);
-                        return sum + avg;
-                    }, 0) / categoryTests.length;
-                    const unit = categoryTests[0].unit || 's';
-                    const isLowerBetter = ['s'].includes(unit);
-
-                    const categoryDiffPercent = overallCategoryAvg !== 0 
-                        ? ((athleteCategoryAvg - overallCategoryAvg) / Math.abs(overallCategoryAvg) * 100).toFixed(1)
-                        : (athleteCategoryAvg !== 0 ? 100 : 0);
-                    const categoryColorClass = isLowerBetter
-                        ? (parseFloat(categoryDiffPercent) < 0 ? 'green' : 'red')
-                        : (parseFloat(categoryDiffPercent) > 0 ? 'green' : 'red');
-                    kpiContent += `
-                        <div class="category-summary">
-                            <span class="kpi-label">Kategorie-Durchschnittsabweichung:</span>
-                            <span class="percent-diff ${categoryColorClass}">${categoryDiffPercent}%</span>
-                        </div>
-                    `;
-
-                    categoryTests.forEach(data => {
-                        const test = data.test;
-                        const athleteResult = data.average || 0;
-                        const overallAvg = (compareTo === 'dfb' && (test === "Antritt (10m)" || test === "Schnelligkeit (20m)"))
-                            ? (dfbAverages[test] || 0)
-                            : (overallAverages[test] || 0);
-                        const displayUnit = unit === 'cm' ? 'm' : unit === 's' ? 'Sekunden' : unit === 'Reps' ? 'Wiederholungen' : unit;
-                        const displayResult = unit === 'cm' ? (athleteResult / 100).toFixed(2) : athleteResult;
-                        const displayOverallAvg = unit === 'cm' ? (overallAvg / 100).toFixed(2) : overallAvg;
-
-                        const diffPercent = overallAvg !== 0 
-                            ? ((athleteResult - overallAvg) / Math.abs(overallAvg) * 100).toFixed(1)
-                            : (athleteResult !== 0 ? 100 : 0);
-                        const colorClass = isLowerBetter
-                            ? (parseFloat(diffPercent) < 0 ? 'green' : 'red')
-                            : (parseFloat(diffPercent) > 0 ? 'green' : 'red');
-
-                        let medalAchieved = 'Keine';
-                        if (thresholds[test]) {
-                            const th = thresholds[test];
-                            if (unit === 's') {
-                                if (athleteResult <= (th.Gold || Infinity)) medalAchieved = 'Gold';
-                                else if (athleteResult <= (th.Silber || Infinity)) medalAchieved = 'Silber';
-                                else if (athleteResult <= (th.Bronze || Infinity)) medalAchieved = 'Bronze';
-                            } else if (unit === 'Reps') {
-                                if (athleteResult >= (th.Gold || 0)) medalAchieved = 'Gold';
-                                else if (athleteResult >= (th.Silber || 0)) medalAchieved = 'Silber';
-                                else if (athleteResult >= (th.Bronze || 0)) medalAchieved = 'Bronze';
-                            } else if (unit === 'cm') {
-                                if (athleteResult >= (th.Gold || 0)) medalAchieved = 'Gold';
-                                else if (athleteResult >= (th.Silber || 0)) medalAchieved = 'Silber';
-                                else if (athleteResult >= (th.Bronze || 0)) medalAchieved = 'Bronze';
-                            }
-                        }
-
-                        kpiContent += `
-                            <div class="test-result">
-                                <span class="kpi-label">${test}:</span> ${displayResult} ${displayUnit} (Durchschnitt: ${displayOverallAvg} ${displayUnit})
-                                <br><span class="kpi-label">Abweichung vom Durchschnitt:</span>
-                                <span class="percent-diff ${colorClass}">${diffPercent}%</span>
-                                <br><span class="kpi-label">Medaille:</span> <span style="color: ${medalAchieved === 'Gold' ? '#ffd700' : medalAchieved === 'Silber' ? '#c0c0c0' : medalAchieved === 'Bronze' ? '#cd7f32' : '#003396'}">${medalAchieved}</span>
-                            </div>
-                        `;
-                    });
+                    const athleteCategoryAvg = athleteData
+                        .filter(row => tests.includes(row.test))
+                        .reduce((sum, row) => sum + row.average, 0) / tests.length || 0;
+                    categoryZScores[category] = calculateZScore(athleteCategoryAvg, mean, stdDev);
                 }
             }
-            document.getElementById('kpiContainer').innerHTML = kpiContent;
+
+            if (myChart) myChart.destroy();
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(categoryZScores),
+                    datasets: [{
+                        label: 'Z-Score',
+                        data: Object.values(categoryZScores),
+                        backgroundColor: '#3373C4',
+                        borderColor: '#003396',
+                        borderWidth: 1,
+                        barThickness: 20,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: { 
+                                display: true, 
+                                text: 'Z-Score',
+                                font: { size: 14, weight: 'bold', color: '#003396' }
+                            },
+                            grid: { color: 'rgba(26, 37, 47, 0.1)' },
+                            ticks: { font: { size: 12, color: '#003396' } }
+                        },
+                        y: { 
+                            title: { 
+                                display: true, 
+                                text: 'Kategorie',
+                                font: { size: 14, weight: 'bold', color: '#003396' }
+                            },
+                            grid: { color: 'rgba(26, 37, 47, 0.1)' },
+                            ticks: { font: { size: 12, color: '#003396' } }
+                        }
+                    },
+                    plugins: {
+                        title: { 
+                            display: true, 
+                            text: `Z-Score Vergleich für ${selectedAthlete}`,
+                            font: { size: 18, weight: 'bold', color: '#3373C4' },
+                            padding: { top: 15, bottom: 15 }
+                        },
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Z-Score: ${context.raw.toFixed(2)}`;
+                                }
+                            },
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#003396',
+                            bodyColor: '#1a252f',
+                            borderColor: '#3373C4',
+                            borderWidth: 2,
+                            borderRadius: 10,
+                            padding: 10
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
         }
 
-        updateTestFilter();
+        updateChart();
     </script>
 </body>
 </html>
