@@ -81,7 +81,7 @@
         .test-table th {
             background-color: #3373C4;
             color: #ffffff;
-            padding: 8px;
+            padding: 6px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -93,7 +93,7 @@
             background-color: #e0f7fa;
         }
         .test-table td {
-            padding: 6px;
+            padding: 4px;
             border: 1px solid #ddd;
         }
         .chart-card {
@@ -112,7 +112,7 @@
             border-color: #3373C4;
             box-shadow: 0 0 8px rgba(51, 115, 196, 0.5);
         }
-        @media (max-width: 576px) {
+        @media (max-width: 768px) {
             h1 {
                 font-size: 1.5rem;
                 padding: 10px;
@@ -122,11 +122,11 @@
             }
             .test-table th, .test-table td {
                 font-size: 12px;
-                padding: 4px;
+                padding: 3px;
             }
             .chart-card {
                 height: 250px;
-                margin-bottom: 20px;
+                margin-bottom: 15px;
             }
         }
     </style>
@@ -153,17 +153,17 @@
             <!-- Test tables will be populated dynamically -->
         </div>
         <div class="row g-4 mt-4">
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="dashboard-card chart-card">
                     <canvas id="categoryChart"></canvas>
                 </div>
             </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="dashboard-card chart-card">
                     <canvas id="sprintChart"></canvas>
                 </div>
             </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="dashboard-card chart-card">
                     <canvas id="nonSprintChart"></canvas>
                 </div>
@@ -270,9 +270,9 @@
                         <table class="test-table">
                             <thead>
                                 <tr>
+                                    <th>Rang</th>
                                     <th>Athlet</th>
                                     <th>Ergebnis</th>
-                                    <th>Rang</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -283,16 +283,16 @@
                     const displayUnit = unit === 's' ? 'Sekunden' : unit === 'Reps' ? 'Wiederholungen' : unit === 'cm' ? 'm' : unit;
                     tableHTML += `
                         <tr>
+                            <td>${row.rank}</td>
                             <td>${row.athlete}</td>
                             <td>${displayResult} ${displayUnit}</td>
-                            <td>${row.rank}</td>
                         </tr>
                     `;
                 });
 
                 tableHTML += '</tbody></table></div>';
                 const colDiv = document.createElement('div');
-                colDiv.className = 'col-12 col-md-4 col-lg-2';
+                colDiv.className = 'col-12 col-md-6 col-lg-4';
                 colDiv.innerHTML = tableHTML;
                 testTableRow.appendChild(colDiv);
             });
