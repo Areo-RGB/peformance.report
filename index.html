@@ -1,33 +1,539 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Performance Report</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.2.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1E1E1E;
+            color: #FFFFFF;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #FFFFFF;
+        }
+        select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            margin: 10px;
+            background-color: #333;
+            color: #FFFFFF;
+            border: 1px solid #555;
+        }
+        select option {
+            background-color: #333;
+            color: #FFFFFF;
+        }
+        #chartContainer {
+            width: 80%;
+            margin: 0 auto;
+            background: #2C2C2C;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            border: 1px solid #444;
+        }
+        #legend {
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: left;
+            display: inline-block;
+            color: #FFFFFF;
+        }
+        .legend-item {
+            margin-right: 20px;
+            display: inline-block;
+        }
+        #summaryCard {
+            width: 80%;
+            margin: 20px auto;
+            background: #2C2C2C;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            border: 1px solid #444;
+            display: flex;
+            align-items: flex-start;
+        }
+        #photoPlaceholder {
+            width: 100px;
+            height: 100px;
+            background: #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 12px;
+            color: #FFFFFF;
+            text-align: center;
+        }
+        #kpiContainer {
+            flex: 1;
+            color: #FFFFFF;
+        }
+        .category-header {
+            font-weight: bold;
+            margin-top: 10px;
+            color: #FFFFFF;
+        }
+        .category-summary {
+            margin-bottom: 5px;
+            padding: 5px;
+            background: #383838;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #FFFFFF;
+        }
+        .test-result {
+            margin-bottom: 5px;
+            padding: 5px;
+            background: #333;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #FFFFFF;
+        }
+        .kpi-label {
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+        .percent-diff.green {
+            color: #00FF00;
+        }
+        .percent-diff.red {
+            color: #FF4040;
+        }
+        #compareToFilter {
+            display: none;
+            margin: 10px;
+        }
+        #dfbLogo {
+            width: 30px;
+            height: 30px;
+            vertical-align: middle;
+            margin-left: 5px;
+            filter: brightness(1.5);
+        }
+    </style>
 </head>
 <body>
-  <h1>Download Performance Report</h1>
-  <p>Click the button below to download a PDF with performance graphs.</p>
-  <a href="performance_report.pdf" download>
-    <button>Download PDF</button>
-  </a>
+    <h1>Player Report</h1>
+    <label for="athleteSelect">Select Athlete: </label>
+    <select id="athleteSelect" onchange="updateTestFilter()"></select>
+    <label for="testSelect">Select Test: </label>
+    <select id="testSelect" onchange="updateCompareFilter()"></select>
+    <div id="compareToFilter">
+        <label for="compareSelect">Compare to: </label>
+        <select id="compareSelect" onchange="updateChart()">
+            <option value="team">Team Average</option>
+            <option value="dfb">DFB <img id="dfbLogo" src="https://seeklogo.com/images/D/dfb-logo-2CA8993E79-seeklogo.com.png" alt="DFB Logo"></option>
+        </select>
+    </div>
+    <div id="chartContainer">
+        <canvas id="myChart"></canvas>
+    </div>
+    <div id="legend"></div>
+    <div id="summaryCard">
+        <div id="photoPlaceholder">Athlete Photo</div>
+        <div id="kpiContainer"></div>
+    </div>
+
+    <script>
+        // Hardcoded data
+        const raw_data = [
+            {"test": "Antritt (10m)", "athlete": "August", "category": "Geschw.", "result": 2.38, "unit": "s"},
+            {"test": "Antritt (10m)", "athlete": "Iraklis", "category": "Geschw.", "result": 2.16, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "August", "category": "Geschw.", "result": 3.85, "unit": "s"},
+            {"test": "Schnelligkeit (20m)", "athlete": "Iraklis", "category": "Geschw.", "result": 3.62, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "August", "category": "Geschw.", "result": 8.9, "unit": "s"},
+            {"test": "50m Sprint", "athlete": "Iraklis", "category": "Geschw.", "result": 8.3, "unit": "s"},
+            {"test": "Seilspringen", "athlete": "August", "category": "Koord.", "result": 25, "unit": "Reps"},
+            {"test": "Seilspringen", "athlete": "Iraklis", "category": "Koord.", "result": 35, "unit": "Reps"},
+            {"test": "Standweitsprung", "athlete": "August", "category": "Kraft", "result": 165, "unit": "cm"},
+            {"test": "Standweitsprung", "athlete": "Iraklis", "category": "Kraft", "result": 180, "unit": "cm"},
+            {"test": "800m Lauf", "athlete": "August", "category": "Ausd.", "result": 300, "unit": "s"},
+            {"test": "800m Lauf", "athlete": "Iraklis", "category": "Ausd.", "result": 260, "unit": "s"}
+        ];
+
+        // Extract unique athletes (exclude Ø)
+        const athletes = [...new Set(raw_data.filter(entry => entry.athlete !== "Ø").map(entry => entry.athlete))].sort();
+
+        // Aggregate data per athlete per test
+        const summary_data = [];
+        athletes.forEach(athlete => {
+            ["Antritt (10m)", "Schnelligkeit (20m)", "50m Sprint", "Seilspringen", "Standweitsprung", "800m Lauf"].forEach(test => {
+                const athlete_test_data = raw_data.filter(entry => entry.athlete === athlete && entry.test === test).map(entry => entry.result);
+                if (athlete_test_data.length > 0) {
+                    const avg_result = Math.round((athlete_test_data.reduce((sum, val) => sum + val, 0) / athlete_test_data.length) * 100) / 100;
+                    const unit = raw_data.find(entry => entry.athlete === athlete && entry.test === test).unit;
+                    summary_data.push({ athlete, test, average: avg_result, unit });
+                }
+            });
+        });
+
+        // Calculate overall averages per test (excluding Ø)
+        const overall_averages = {};
+        ["Antritt (10m)", "Schnelligkeit (20m)", "50m Sprint", "Seilspringen", "Standweitsprung", "800m Lauf"].forEach(test => {
+            const test_data = raw_data.filter(entry => entry.test === test && entry.athlete !== "Ø").map(entry => entry.result);
+            overall_averages[test] = test_data.length > 0 ? Math.round((test_data.reduce((sum, val) => sum + val, 0) / test_data.length) * 100) / 100 : 0;
+        });
+
+        // Predefined DFB data and thresholds
+        const dfb_averages = {
+            "Antritt (10m)": 2.19,
+            "Schnelligkeit (20m)": 3.79
+        };
+
+        const thresholds = {
+            "Antritt (10m)": {"Bronze": 2.33, "Silber": 2.24, "Gold": 2.05},
+            "Schnelligkeit (20m)": {"Bronze": 4.14, "Silber": 3.95, "Gold": 3.64},
+            "50m Sprint": {"Bronze": 10.3, "Silber": 9.1, "Gold": 8.4},
+            "800m Lauf": {"Bronze": 320, "Silber": 280, "Gold": 245},
+            "Seilspringen": {"Bronze": 20, "Silber": 30, "Gold": 40},
+            "Standweitsprung": {"Bronze": 1.50, "Silber": 1.70, "Gold": 1.85}
+        };
+
+        const dfb_best = {
+            "Antritt (10m)": 1.99,
+            "Schnelligkeit (20m)": 3.47
+        };
+
+        let myChart;
+
+        // Populate athlete dropdown
+        const athleteSelect = document.getElementById('athleteSelect');
+        athletes.forEach(athlete => {
+            const option = document.createElement('option');
+            option.value = athlete;
+            option.text = athlete;
+            athleteSelect.appendChild(option);
+        });
+
+        function updateTestFilter() {
+            const athleteSelect = document.getElementById('athleteSelect');
+            const testSelect = document.getElementById('testSelect');
+            const selectedAthlete = athleteSelect.value;
+
+            const availableTests = [...new Set(summary_data
+                .filter(row => row && row.athlete === selectedAthlete)
+                .map(row => row.test))];
+
+            testSelect.innerHTML = '';
+            availableTests.forEach(test => {
+                const option = document.createElement('option');
+                option.value = test;
+                option.text = test;
+                testSelect.appendChild(option);
+            });
+
+            updateCompareFilter();
+            updateChart();
+            updateSummaryCard(selectedAthlete);
+        }
+
+        function updateCompareFilter() {
+            const testSelect = document.getElementById('testSelect');
+            const compareToFilter = document.getElementById('compareToFilter');
+            const selectedTest = testSelect.value;
+
+            if (selectedTest === "Antritt (10m)" || selectedTest === "Schnelligkeit (20m)") {
+                compareToFilter.style.display = 'inline-block';
+            } else {
+                compareToFilter.style.display = 'none';
+            }
+
+            updateChart();
+        }
+
+        function updateChart() {
+            const athleteSelect = document.getElementById('athleteSelect');
+            const testSelect = document.getElementById('testSelect');
+            const compareSelect = document.getElementById('compareSelect');
+            const selectedAthlete = athleteSelect.value;
+            const selectedTest = testSelect.value;
+            const compareTo = compareSelect ? compareSelect.value : 'team';
+
+            const testData = summary_data.filter(row => row && row.test === selectedTest);
+            const labels = testData.map(row => row.athlete);
+            const averages = testData.map(row => row.average);
+            const unit = testData.length > 0 ? testData[0].unit : 's';
+
+            const backgroundColors = testData.map(row =>
+                row.athlete === selectedAthlete ? 'rgba(255, 64, 64, 0.7)' : 'rgba(64, 196, 255, 0.7)'
+            );
+
+            let comparisonAvg = 0;
+            let dfbBestResult = null;
+            if (compareTo === 'dfb' && (selectedTest === "Antritt (10m)" || selectedTest === "Schnelligkeit (20m)")) {
+                comparisonAvg = dfb_averages[selectedTest] || 0;
+                dfbBestResult = dfb_best[selectedTest] || 0;
+            } else {
+                comparisonAvg = overall_averages[selectedTest] || 0;
+            }
+
+            let datasets = [
+                {
+                    label: `Result (${unit})`,
+                    data: averages,
+                    backgroundColor: backgroundColors,
+                    borderColor: backgroundColors.map(color => color.replace('0.7', '1')),
+                    borderWidth: 1
+                },
+                {
+                    label: compareTo === 'dfb' ? 'DFB Average' : 'Team Average',
+                    data: Array(labels.length).fill(comparisonAvg),
+                    type: 'line',
+                    fill: false,
+                    borderColor: '#00FFFF',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    pointRadius: 0
+                }
+            ];
+
+            if (compareTo === 'dfb' && dfbBestResult !== null) {
+                datasets.push({
+                    label: 'DFB Best',
+                    data: Array(labels.length).fill(dfbBestResult),
+                    type: 'line',
+                    fill: false,
+                    borderColor: '#00FF00',
+                    borderWidth: 2,
+                    borderDash: [10, 5],
+                    pointRadius: 0
+                });
+            }
+
+            let thresholdZones = [];
+            let legendContent = '';
+            if (thresholds[selectedTest] && ["50m Sprint", "Standweitsprung", "Seilspringen", "800m Lauf"].includes(selectedTest)) {
+                const th = thresholds[selectedTest];
+                const maxValue = Math.max(...averages, comparisonAvg, dfbBestResult || 0) * 1.2 || 10;
+                if (unit === 's') {
+                    thresholdZones = [
+                        { yMin: th.Gold || 0, yMax: th.Silber || maxValue, backgroundColor: 'rgba(255, 215, 0, 0.3)', label: 'Gold' },
+                        { yMin: th.Silber || 0, yMax: th.Bronze || maxValue, backgroundColor: 'rgba(192, 192, 192, 0.3)', label: 'Silber' },
+                        { yMin: th.Bronze || 0, yMax: maxValue, backgroundColor: 'rgba(205, 127, 50, 0.3)', label: 'Bronze' }
+                    ];
+                    legendContent = `
+                        <span class="legend-item">🥇 Gold: ${th.Gold || 'N/A'} ${unit}</span>
+                        <span class="legend-item">🥈 Silber: ${th.Silber || 'N/A'} ${unit}</span>
+                        <span class="legend-item">🥉 Bronze: ${th.Bronze || 'N/A'} ${unit}</span>
+                    `;
+                } else if (unit === 'Reps') {
+                    thresholdZones = [
+                        { yMin: 0, yMax: th.Bronze || 0, backgroundColor: 'rgba(205, 127, 50, 0.3)', label: 'Bronze' },
+                        { yMin: th.Bronze || 0, yMax: th.Silber || maxValue, backgroundColor: 'rgba(192, 192, 192, 0.3)', label: 'Silber' },
+                        { yMin: th.Silber || 0, yMax: th.Gold || maxValue, backgroundColor: 'rgba(255, 215, 0, 0.3)', label: 'Gold' },
+                        { yMin: th.Gold || 0, yMax: maxValue, backgroundColor: 'rgba(0, 0, 0, 0)' }
+                    ];
+                    legendContent = `
+                        <span class="legend-item">🥇 Gold: ${th.Gold || 'N/A'} ${unit}</span>
+                        <span class="legend-item">🥈 Silber: ${th.Silber || 'N/A'} ${unit}</span>
+                        <span class="legend-item">🥉 Bronze: ${th.Bronze || 'N/A'} ${unit}</span>
+                    `;
+                } else if (unit === 'cm') {
+                    thresholdZones = [
+                        { yMin: 0, yMax: (th.Bronze || 0) * 100, backgroundColor: 'rgba(205, 127, 50, 0.3)', label: 'Bronze' },
+                        { yMin: (th.Bronze || 0) * 100, yMax: (th.Silber || 0) * 100, backgroundColor: 'rgba(192, 192, 192, 0.3)', label: 'Silber' },
+                        { yMin: (th.Silber || 0) * 100, yMax: (th.Gold || 0) * 100, backgroundColor: 'rgba(255, 215, 0, 0.3)', label: 'Gold' },
+                        { yMin: (th.Gold || 0) * 100, yMax: maxValue, backgroundColor: 'rgba(0, 0, 0, 0)' }
+                    ];
+                    legendContent = `
+                        <span class="legend-item">🥇 Gold: ${(th.Gold || 0).toFixed(2)} m</span>
+                        <span class="legend-item">🥈 Silber: ${(th.Silber || 0).toFixed(2)} m</span>
+                        <span class="legend-item">🥉 Bronze: ${(th.Bronze || 0).toFixed(2)} m</span>
+                    `;
+                }
+                if (compareTo === 'dfb' && (selectedTest === "Antritt (10m)" || selectedTest === "Schnelligkeit (20m)")) {
+                    legendContent += `
+                        <span class="legend-item">Ø DFB Avg: ${comparisonAvg || 'N/A'} ${unit}</span>
+                        <span class="legend-item">🏆 DFB Best: ${dfbBestResult || 'N/A'} ${unit}</span>
+                    `;
+                }
+            } else if (compareTo === 'dfb' && (selectedTest === "Antritt (10m)" || selectedTest === "Schnelligkeit (20m)")) {
+                legendContent = `
+                    <span class="legend-item">Ø DFB Avg: ${comparisonAvg || 'N/A'} ${unit}</span>
+                    <span class="legend-item">🏆 DFB Best: ${dfbBestResult || 'N/A'} ${unit}</span>
+                `;
+            }
+
+            if (myChart) myChart.destroy();
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: `Result (${unit})`,
+                                color: '#FFFFFF'
+                            },
+                            position: 'left',
+                            suggestedMax: Math.max(...averages, comparisonAvg, dfbBestResult || 0) * 1.2 || 10,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#FFFFFF'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Athlete',
+                                color: '#FFFFFF'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#FFFFFF'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `${selectedTest} Performance`,
+                            color: '#FFFFFF'
+                        },
+                        annotation: {
+                            annotations: thresholdZones.map(zone => ({
+                                type: 'box',
+                                yMin: zone.yMin,
+                                yMax: zone.yMax,
+                                backgroundColor: zone.backgroundColor,
+                                borderWidth: 0,
+                                label: {
+                                    enabled: zone.label ? true : false,
+                                    content: zone.label || '',
+                                    position: 'start',
+                                    color: '#FFFFFF'
+                                }
+                            }))
+                        },
+                        tooltip: {
+                            backgroundColor: '#333',
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#FFFFFF',
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    label += context.raw + ' ' + unit;
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                color: '#FFFFFF'
+                            }
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('legend').innerHTML = legendContent;
+        }
+
+        function updateSummaryCard(selectedAthlete) {
+            const athleteData = summary_data.filter(row => row && row.athlete === selectedAthlete);
+            const compareSelect = document.getElementById('compareSelect');
+            const compareTo = compareSelect ? compareSelect.value : 'team';
+
+            const categories = {
+                "Schnelligkeit": ["Antritt (10m)", "Schnelligkeit (20m)", "50m Sprint"],
+                "Ausdauer": ["800m Lauf"],
+                "Kraft": ["Standweitsprung"],
+                "Koordination": ["Seilspringen"]
+            };
+            let kpiContent = '';
+
+            for (const [category, tests] of Object.entries(categories)) {
+                const categoryTests = athleteData.filter(data => data && tests.includes(data.test));
+                if (categoryTests.length > 0) {
+                    kpiContent += `<div class="category-header">${category}</div>`;
+
+                    const athleteCategoryAvg = categoryTests.reduce((sum, data) => sum + (data.average || 0), 0) / categoryTests.length;
+                    const overallCategoryAvg = categoryTests.reduce((sum, data) => {
+                        if (compareTo === 'dfb' && (data.test === "Antritt (10m)" || data.test === "Schnelligkeit (20m)")) {
+                            return sum + (dfb_averages[data.test] || 0);
+                        }
+                        return sum + (overall_averages[data.test] || 0);
+                    }, 0) / categoryTests.length;
+                    const unit = categoryTests[0].unit || 's';
+                    const isLowerBetter = ['s'].includes(unit);
+                    const categoryDiffPercent = ((athleteCategoryAvg - overallCategoryAvg) / (overallCategoryAvg || 1) * 100).toFixed(1);
+                    const categoryColorClass = isLowerBetter
+                        ? (categoryDiffPercent < 0 ? 'green' : 'red')
+                        : (categoryDiffPercent > 0 ? 'green' : 'red');
+                    kpiContent += `
+                        <div class="category-summary">
+                            <span class="kpi-label">Category Avg Diff:</span>
+                            <span class="percent-diff ${categoryColorClass}">${categoryDiffPercent}%</span>
+                        </div>
+                    `;
+
+                    categoryTests.forEach(data => {
+                        const test = data.test;
+                        const athleteResult = data.average || 0;
+                        const overallAvg = (compareTo === 'dfb' && (test === "Antritt (10m)" || test === "Schnelligkeit (20m)"))
+                            ? (dfb_averages[test] || 0)
+                            : (overall_averages[test] || 0);
+                        const displayUnit = unit === 'cm' ? 'm' : unit;
+                        const displayResult = unit === 'cm' ? (athleteResult / 100).toFixed(2) : athleteResult;
+                        const displayOverallAvg = unit === 'cm' ? (overallAvg / 100).toFixed(2) : overallAvg;
+
+                        const diffPercent = ((athleteResult - overallAvg) / (overallAvg || 1) * 100).toFixed(1);
+                        const colorClass = isLowerBetter
+                            ? (diffPercent < 0 ? 'green' : 'red')
+                            : (diffPercent > 0 ? 'green' : 'red');
+
+                        let medalAchieved = 'None';
+                        if (thresholds[test]) {
+                            const th = thresholds[test];
+                            if (unit === 's') {
+                                if (athleteResult <= (th.Gold || Infinity)) medalAchieved = 'Gold';
+                                else if (athleteResult <= (th.Silber || Infinity)) medalAchieved = 'Silber';
+                                else if (athleteResult <= (th.Bronze || Infinity)) medalAchieved = 'Bronze';
+                            } else if (unit === 'Reps' || unit === 'cm') {
+                                const adjustedResult = unit === 'cm' ? athleteResult / 100 : athleteResult;
+                                if (adjustedResult >= (th.Gold || 0)) medalAchieved = 'Gold';
+                                else if (adjustedResult >= (th.Silber || 0)) medalAchieved = 'Silber';
+                                else if (adjustedResult >= (th.Bronze || 0)) medalAchieved = 'Bronze';
+                            }
+                        }
+
+                        kpiContent += `
+                            <div class="test-result">
+                                <span class="kpi-label">${test}:</span> ${displayResult} ${displayUnit} (Avg: ${displayOverallAvg} ${displayUnit})
+                                <br><span class="kpi-label">Diff from Avg:</span>
+                                <span class="percent-diff ${colorClass}">${diffPercent}%</span>
+                                <br><span class="kpi-label">Medal:</span> ${medalAchieved}
+                            </div>
+                        `;
+                    });
+                }
+            }
+            document.getElementById('kpiContainer').innerHTML = kpiContent;
+        }
+
+        // Initialize the dashboard
+        updateTestFilter();
+    </script>
 </body>
 </html>
