@@ -22,7 +22,7 @@
             padding: 20px; 
             border-radius: 10px; 
             box-shadow: 0 0 10px rgba(0,0,0,0.1); 
-            min-height: 400px; /* Ensures a decent height */
+            min-height: 400px; 
         }
         #legend { 
             font-size: 14px; 
@@ -86,7 +86,7 @@
                 font-size: 10px; 
             }
             #chartContainer { 
-                min-height: 300px; /* Smaller height for mobile */
+                min-height: 300px; 
             }
         }
     </style>
@@ -215,7 +215,7 @@
             "50m Sprint": 9.1,
             "800m Lauf": 280,
             "Seilspringen": 30,
-            "Standweitsprung": 1.70
+            "Standweitsprung": 163 // Updated to cm to match data
         };
 
         const dfbAverages = {
@@ -229,7 +229,7 @@
             "50m Sprint": {"Bronze": 10.3, "Silber": 9.1, "Gold": 8.4},
             "800m Lauf": {"Bronze": 320, "Silber": 280, "Gold": 245},
             "Seilspringen": {"Bronze": 20, "Silber": 30, "Gold": 40},
-            "Standweitsprung": {"Bronze": 1.50, "Silber": 1.70, "Gold": 1.85}
+            "Standweitsprung": {"Bronze": 150, "Silber": 170, "Gold": 185} // In cm
         };
 
         let myChart;
@@ -317,7 +317,7 @@
                     datasets: datasets
                 },
                 options: {
-                    indexAxis: 'y', // Makes it a horizontal bar chart
+                    indexAxis: 'y',
                     scales: {
                         x: {
                             beginAtZero: true,
@@ -365,7 +365,7 @@
                         }
                     },
                     responsive: true,
-                    maintainAspectRatio: false // Allows chart to fill container height
+                    maintainAspectRatio: false
                 }
             });
         }
@@ -390,14 +390,21 @@
 
                     const athleteCategoryAvg = categoryTests.reduce((sum, data) => sum + data.average, 0) / categoryTests.length;
                     const overallCategoryAvg = categoryTests.reduce((sum, data) => {
-                        return sum + (compareTo === 'dfb' ? dfbAverages[data.test] || 0 : overallAverages[data.test] || 0);
+                        const avg = compareTo === 'dfb' && (data.test === "Antritt (10m)" || data.test === "Schnelligkeit (20m)")
+                            ? (dfbAverages[data.test] || 0)
+                            : (overallAverages[data.test] || 0);
+                        return sum + avg;
                     }, 0) / categoryTests.length;
                     const unit = categoryTests[0].unit || 's';
                     const isLowerBetter = ['s'].includes(unit);
-                    const categoryDiffPercent = ((athleteCategoryAvg - overallCategoryAvg) / (overallCategoryAvg || 1) * 100).toFixed(1);
+
+                    // Safeguard for division by zero
+                    const categoryDiffPercent = overallCategoryAvg !== 0 
+                        ? ((athleteCategoryAvg - overallCategoryAvg) / Math.abs(overallCategoryAvg) * 100).toFixed(1)
+                        : (athleteCategoryAvg !== 0 ? 100 : 0);
                     const categoryColorClass = isLowerBetter
-                        ? (categoryDiffPercent < 0 ? 'green' : 'red')
-                        : (categoryDiffPercent > 0 ? 'green' : 'red');
+                        ? (parseFloat(categoryDiffPercent) < 0 ? 'green' : 'red')
+                        : (parseFloat(categoryDiffPercent) > 0 ? 'green' : 'red');
                     kpiContent += `
                         <div class="category-summary">
                             <span class="kpi-label">Category Avg Diff:</span>
@@ -415,10 +422,13 @@
                         const displayResult = unit === 'cm' ? (athleteResult / 100).toFixed(2) : athleteResult;
                         const displayOverallAvg = unit === 'cm' ? (overallAvg / 100).toFixed(2) : overallAvg;
 
-                        const diffPercent = ((athleteResult - overallAvg) / (overallAvg || 1) * 100).toFixed(1);
+                        // Safeguard for division by zero
+                        const diffPercent = overallAvg !== 0 
+                            ? ((athleteResult - overallAvg) / Math.abs(overallAvg) * 100).toFixed(1)
+                            : (athleteResult !== 0 ? 100 : 0);
                         const colorClass = isLowerBetter
-                            ? (diffPercent < 0 ? 'green' : 'red')
-                            : (diffPercent > 0 ? 'green' : 'red');
+                            ? (parseFloat(diffPercent) < 0 ? 'green' : 'red')
+                            : (parseFloat(diffPercent) > 0 ? 'green' : 'red');
 
                         let medalAchieved = 'None';
                         if (thresholds[test]) {
